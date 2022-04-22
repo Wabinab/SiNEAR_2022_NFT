@@ -116,7 +116,7 @@ impl NonFungibleTokenCore for Contract {
 
       // call the internal transfer method
       // return previous token so we can refund the approved account IDs. 
-      let (previous_token, current_token) = self.internal_transfer(
+      let (_previous_token, current_token) = self.internal_transfer(
         &sender_id,
         &receiver_id,
         &percentage,

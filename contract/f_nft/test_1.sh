@@ -21,7 +21,7 @@ near call $NFT_CONTRACT_ID nft_mint '{
 near call $CONTRACT nft_transfer '{
   "receiver_id": "wabinab.testnet",
   "token_id": "'$1'",
-  "percentage": 5000,
+  "percentage": 15000,
   "approval_id": 1
 }'  --accountId $CONTRACT --depositYocto 1
 
@@ -32,27 +32,27 @@ near view $CONTRACT nft_tokens_for_owner '{
 }'
 
 # ===========================================
-near call $CONTRACT nft_transfer '{
-  "receiver_id": "somebodyelse.testnet",
-  "token_id": "'$1'",
-  "percentage": 2000,
-  "approval_id": 1
-}'  --accountId $CONTRACT --depositYocto 1
+# near call $CONTRACT nft_transfer '{
+#   "receiver_id": "somebodyelse.testnet",
+#   "token_id": "'$1'",
+#   "percentage": 2000,
+#   "approval_id": 1
+# }'  --accountId $CONTRACT --depositYocto 1
 
-near view $CONTRACT nft_tokens_for_owner '{
-  "account_id": "somebodyelse.testnet",
-  "limit": 10
-}'
+# near view $CONTRACT nft_tokens_for_owner '{
+#   "account_id": "somebodyelse.testnet",
+#   "limit": 10
+# }'
 
-# ===========================================
-near call $CONTRACT nft_transfer '{
-  "receiver_id": "somebodyelse.testnet",
-  "token_id": "'$1'",
-  "percentage": 1000,
-  "approval_id": 1
-}'  --accountId wabinab.testnet --depositYocto 1
+# # ===========================================
+# near call $CONTRACT nft_transfer '{
+#   "receiver_id": "somebodyelse.testnet",
+#   "token_id": "'$1'",
+#   "percentage": 1000,
+#   "approval_id": 1
+# }'  --accountId wabinab.testnet --depositYocto 1
 
-near view $CONTRACT nft_tokens_for_owner '{
-  "account_id": "somebodyelse.testnet",
-  "limit": 10
-}'
+# near view $CONTRACT nft_tokens_for_owner '{
+#   "account_id": "somebodyelse.testnet",
+#   "limit": 10
+# }'

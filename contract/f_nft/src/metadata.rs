@@ -23,7 +23,7 @@ pub struct NFTContractMetadata {
 }
 
 
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct TokenMetadata {
     pub title: Option<String>,
@@ -53,7 +53,7 @@ pub struct Token {
 
 
 /// The Json token is what will be returned from view calls. 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct JsonToken {
     // pub owner_id: AccountId, 
