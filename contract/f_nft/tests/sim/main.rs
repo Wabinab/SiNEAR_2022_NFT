@@ -18,3 +18,4 @@ near_sdk_sim::lazy_static_include::lazy_static_include_bytes! {
 
 mod test_transfer_as_expected;
 mod test_transfer_more_than_you_have_fails;
+mod test_mint_multiple_return_as_expected;
