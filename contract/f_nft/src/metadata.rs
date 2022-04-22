@@ -44,7 +44,7 @@ pub struct TokenMetadata {
 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Token {
-    pub owner_id: AccountId,
+    // pub owner_id: AccountId,
     pub approved_account_ids: HashMap<AccountId, u64>,
     pub next_approval_id: u64,
 
@@ -56,11 +56,11 @@ pub struct Token {
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct JsonToken {
-    pub owner_id: AccountId, 
+    // pub owner_id: AccountId, 
+    pub all_owners: HashMap<AccountId, Percentage>,
     pub token_id: TokenId,
     pub metadata: TokenMetadata,
     pub approved_account_ids: HashMap<AccountId, u64>,
-    pub all_owners: HashMap<AccountId, Percentage>,
 }
 
 

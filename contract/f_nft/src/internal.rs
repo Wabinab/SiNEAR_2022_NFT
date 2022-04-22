@@ -56,6 +56,19 @@ pub(crate) fn refund_approved_account_ids(
 }
 
 
+/// TEMPORARY REPLACEMENT FOR refund_approved_account_ids: 
+/// Instead, we refund only if sender sends all of his share. 
+pub(crate) fn refund_if_empty(
+  sender_id: AccountId,
+) -> Promise {
+    let storage_released = bytes_for_approved_account_id(&sender_id);
+
+    Promise::new(sender_id).transfer(
+      Balance::from(storage_released) * env::storage_byte_cost()
+    )
+}
+
+
 /// refund the initial deposit based on the amount of 
 /// storage that was used up
 pub(crate) fn refund_deposit(storage_used: u64) {
@@ -149,50 +162,70 @@ impl Contract {
       token_id: &TokenId,
       approval_id: Option<u64>,
       memo: Option<String>
-    ) -> Token {
+    ) -> (Token, Token) {
       let token = expect_lightweight(
         self.tokens_by_id.get(token_id),
         "No token"
       );
 
-      // If sender not owner, panic. 
-      if sender_id != &token.owner_id {
-        if !token.approved_account_ids.contains_key(sender_id) {
-          env::panic_str("Unauthorized transaction");
-        }
-
-
-        // If pass, check if sender's actual approved_id is same
-        // as the one included.
-        if let Some(enforced_approval_id) = approval_id {
-          let actual_approval_id = expect_lightweight(
-            token.approved_account_ids.get(sender_id),
-            "Sender is not approved account"
-          );
-
-          require!(
-            actual_approval_id == &enforced_approval_id,
+      // If sender not one of all_owners, panic. 
+      if let Some(percentage_allowance) = &token.all_owners.get(sender_id) {
+        // Owner could only transfer this much.
+        if percentage > percentage_allowance {
+          env::panic_str(
             format!(
-              "The actual approval_id {} differs from the given approval_id {}",
-              actual_approval_id,
-              enforced_approval_id,
-            ),
+              "You try to send {}% of this NFT when you only have {}% of it.",
+              percentage.clone() as f32 / 100f32,
+              *percentage_allowance.clone() as f32 / 100f32
+            ).as_str(),
           );
         }
+      } else {
+        // Not inside all_owners. Panic. 
+        env::panic_str("You do not have a share of this NFT.");
       }
+
+      // If sender not owner, panic. 
+      // if sender_id != &token.owner_id {
+      //   if !token.approved_account_ids.contains_key(sender_id) {
+      //     env::panic_str("Unauthorized transaction");
+      //   }
+
+
+      //   // If pass, check if sender's actual approved_id is same
+      //   // as the one included.
+      //   if let Some(enforced_approval_id) = approval_id {
+      //     let actual_approval_id = expect_lightweight(
+      //       token.approved_account_ids.get(sender_id),
+      //       "Sender is not approved account"
+      //     );
+
+      //     require!(
+      //       actual_approval_id == &enforced_approval_id,
+      //       format!(
+      //         "The actual approval_id {} differs from the given approval_id {}",
+      //         actual_approval_id,
+      //         enforced_approval_id,
+      //       ),
+      //     );
+      //   }
+      // }
 
       // Make sure sender isn't sending token to themselves
       require!(
-        &token.owner_id != receiver_id,
-        "The token owner and receiver should be different"
+        sender_id != receiver_id,
+        "The senderr and receiver should be different"
       );
 
-      let percentage_value = token.all_owners.get(&token.owner_id).unwrap();
+      let percentage_value = token.all_owners.get(sender_id).unwrap();
       let remnant_percentage = percentage_value - percentage;
+
+      let receiver_current_percentage = token.all_owners.get(receiver_id).unwrap_or(&0u16);
+      let receiver_new_percentage = receiver_current_percentage + percentage;
 
       if percentage_value == percentage {
         // remove token from it's current owner's set
-        self.internal_remove_token_from_owner(&token.owner_id, token_id);
+        self.internal_remove_token_from_owner(sender_id, token_id);
       }
 
       // add token to receiver_id's set.
@@ -206,15 +239,15 @@ impl Contract {
       let mut all_owners = token.all_owners.clone();
       if remnant_percentage > 0u16 {
         // No need to remove owner, just change it to "remnant". 
-        *all_owners.get_mut(&token.owner_id).unwrap() = remnant_percentage;
-        all_owners.insert(receiver_id.clone(), percentage.clone());
+        *all_owners.get_mut(sender_id).unwrap() = remnant_percentage;
+        all_owners.insert(receiver_id.clone(), receiver_new_percentage.clone());
       } else {
-        all_owners.remove(&token.owner_id);
-        all_owners.insert(receiver_id.clone(), percentage_value.clone());
+        all_owners.remove(sender_id);
+        all_owners.insert(receiver_id.clone(), receiver_new_percentage.clone());
       }
       
       let new_token = Token {
-        owner_id: receiver_id.clone(),
+        // owner_id: receiver_id.clone(),
         approved_account_ids: Default::default(),
         all_owners: all_owners,  // can be shortcut, just being explicit. 
         next_approval_id: token.next_approval_id,
@@ -238,11 +271,12 @@ impl Contract {
         version : NFT_METADATA_SPEC.to_string(),
         event   : EventLogVariant::NftTransfer(vec![NftTransferLog {
           authorized_id,
-          old_owner_id: token.owner_id.to_string(),
+          old_owner_id: sender_id.to_string(),
           new_owner_id: receiver_id.to_string(),
           token_ids   : vec![token_id.to_string()],
           memo,
           percentage_new_owner: *percentage_value,
+          // might add percentage_old_owner too! 
         }]),
       };
 
@@ -250,6 +284,6 @@ impl Contract {
       env::log_str(&nft_transfer_log.to_string());
 
       // return previous token object that was transferred. 
-      token
+      (token, new_token)
     }
 }

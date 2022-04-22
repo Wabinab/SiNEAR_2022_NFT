@@ -25,7 +25,7 @@ impl Contract {
 
       // specify the token struct that contains the owner ID. 
       let token = Token {
-        owner_id: receiver_id,
+        // owner_id: receiver_id,
         approved_account_ids: Default::default(),  // default value is empty map.
         next_approval_id: 0,
         all_owners,
@@ -40,14 +40,18 @@ impl Contract {
 
       self.token_metadata_by_id.insert(&token_id, &metadata);
 
-      self.internal_add_token_to_owner(&token.owner_id, &token_id);
+      // Just for owner_id's sake: 
+      let owner_id = receiver_id;
+
+      self.internal_add_token_to_owner(&owner_id, &token_id);
 
       // Log the minting as per events standard. 
+      // Minting still have "owner_id" because it's the first person whom mint. 
       let nft_mint_log: EventLog = EventLog {
         standard: NFT_STANDARD_NAME.to_string(),
         version : NFT_METADATA_SPEC.to_string(),
         event   : EventLogVariant::NftMint(vec![NftMintLog {
-          owner_id : token.owner_id.to_string(),
+          owner_id : owner_id.to_string(),
           token_ids: vec![token_id.to_string()],
           memo     : None,  // optional
         }]),

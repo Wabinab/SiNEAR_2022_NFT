@@ -1,3 +1,14 @@
+"""
+Temporarily detached from lib.rs. We might include it in the future. 
+For now, it's making things confusing. 
+
+Also, we need to rethink approval maps from <AccountId, u64> to 
+<AccountId, Array>, as we need a list of whom that particular owner
+approved. Owner A approve Friend B to transfer on A's behalf, but
+B can only transfer A's asset, not Owner C's asset, whom also hold
+a share to the same NFT. 
+"""
+
 use crate::*;
 use near_sdk::{ext_contract, Gas, require};
 
@@ -62,7 +73,7 @@ impl NonFungibleTokenCore for Contract {
 
       require!(
         &env::predecessor_account_id() == &token.owner_id,
-        "Predecessor must be the token owner."
+        "nft_approve failed: Predecessor must be the token owner."
       );
 
       let approval_id: u64 = token.next_approval_id;

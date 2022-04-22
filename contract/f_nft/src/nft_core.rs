@@ -1,5 +1,5 @@
 use crate::*;
-use near_sdk::{ext_contract, log, Gas, PromiseResult, require};
+use near_sdk::{ext_contract, Gas, PromiseResult, require};
 
 const GAS_FOR_RESOLVE_TRANSFER: Gas = Gas(10_000_000_000_000);
 const GAS_FOR_NFT_TRANSFER_CALL: Gas = Gas(25_000_000_000_000 + GAS_FOR_RESOLVE_TRANSFER.0);
@@ -62,9 +62,10 @@ trait NonFungibleTokenResolver {
       owner_id: AccountId,
       receiver_id: AccountId,
       percentage: Percentage,
+      previous_receiver_percentage: Percentage,
       token_id: TokenId,
-      approved_account_ids: HashMap<AccountId, u64>,
-      // all_owners: HashMap<AccountId, Percentage>,
+      // approved_account_ids: HashMap<AccountId, u64>,
+      all_owners: HashMap<AccountId, Percentage>,
       memo: Option<String>,
     ) -> bool;
 }
@@ -82,9 +83,10 @@ trait NonFungibleTokenResolver {
     owner_id: AccountId,
     receiver_id: AccountId,
     percentage: Percentage,
+    previous_receiver_percentage: Percentage,
     token_id: TokenId,
-    approved_account_ids: HashMap<AccountId, u64>,
-    // all_owners: HashMap<AccountId, Percentage>,
+    // approved_account_ids: HashMap<AccountId, u64>,
+    all_owners: HashMap<AccountId, Percentage>,
     memo: Option<String>,
   ) -> bool;
 }
@@ -110,9 +112,11 @@ impl NonFungibleTokenCore for Contract {
       // get sender to transfer token from sender to receiver. 
       let sender_id = env::predecessor_account_id();
 
+      // If we have approval, we need to get signer_account_id() in the future. 
+
       // call the internal transfer method
       // return previous token so we can refund the approved account IDs. 
-      let previous_token = self.internal_transfer(
+      let (previous_token, current_token) = self.internal_transfer(
         &sender_id,
         &receiver_id,
         &percentage,
@@ -122,10 +126,15 @@ impl NonFungibleTokenCore for Contract {
       );
 
       // refund owner for releasing the used up storage by approved account IDs.
-      refund_approved_account_ids(
-        previous_token.owner_id.clone(),
-        &previous_token.approved_account_ids,
-      );
+      // refund_approved_account_ids(
+      //   // previous_token.owner_id.clone(),
+      //   sender_id.clone(),
+      //   &previous_token.approved_account_ids,
+      // );
+
+      if let None = current_token.all_owners.get(&sender_id) {
+        refund_if_empty(sender_id);
+      }
     }
 
     /// Implementation of the transfer call method. This will transfer the NFT 
@@ -152,10 +161,12 @@ impl NonFungibleTokenCore for Contract {
         ),
       );
 
+      // Currently w/o approval, sender MUST HOLD A SHARE to the F-NFT. 
+      // Hence sender_id == previous_owner of token. At least for now. 
       let sender_id = env::predecessor_account_id();
 
       // transfer token and get previous token object
-      let previous_token = self.internal_transfer(
+      let (previous_token, current_token) = self.internal_transfer(
         &sender_id,
         &receiver_id,
         &percentage,
@@ -166,17 +177,26 @@ impl NonFungibleTokenCore for Contract {
 
       // we now need authorized ID to be passed in to 
       // function. 
-      let mut authorized_id = None;
+      // let mut authorized_id = None;
 
       // if sender not owner of token, set authorized ID = sender.
-      if sender_id != previous_token.owner_id {
-        authorized_id = Some(sender_id.to_string());
-      }
+      // if sender_id != previous_token.owner_id {
+      //   authorized_id = Some(sender_id.to_string());
+      // }
+
+      // We just let authorized_id equal sender id immediately. 
+      let authorized_id = Some(sender_id.to_string());
+
+      let previous_percentage: Percentage = match previous_token.all_owners.get(&receiver_id) {
+        Some(percentage) => *percentage,
+        None => 0u16
+      };
       
       // initiating receiver's call and callback
       ext_non_fungible_token_receiver::nft_on_transfer(
-        sender_id,
-        previous_token.owner_id.clone(),
+        sender_id.clone(),
+        // previous_token.owner_id.clone(),
+        sender_id.clone(),
         percentage.clone(),
         token_id.clone(),
         msg,
@@ -186,11 +206,14 @@ impl NonFungibleTokenCore for Contract {
       ).then(
         ext_self::nft_resolve_transfer(
           authorized_id,
-          previous_token.owner_id,
+          // previous_token.owner_id,
+          sender_id,
           receiver_id,
           percentage,
+          previous_percentage,
           token_id,
-          previous_token.approved_account_ids,
+          // previous_token.approved_account_ids,
+          current_token.all_owners,
           memo,
           env::current_account_id(),
           NO_DEPOSIT,
@@ -208,7 +231,6 @@ impl NonFungibleTokenCore for Contract {
 
         Some(JsonToken {
           token_id,
-          owner_id: token.owner_id,
           metadata,
           approved_account_ids: token.approved_account_ids,
           all_owners: token.all_owners
@@ -232,8 +254,10 @@ impl NonFungibleTokenResolver for Contract {
         owner_id: AccountId,
         receiver_id: AccountId,
         percentage: Percentage,
+        previous_percentage: Percentage,
         token_id: TokenId,
-        approved_account_ids: HashMap<AccountId, u64>,
+        // approved_account_ids: HashMap<AccountId, u64>,
+        all_owners: HashMap<AccountId, Percentage>,
         memo: Option<String>,  // for logging transfer event. 
     ) -> bool {
       if let PromiseResult::Successful(value) = env::promise_result(0) {
@@ -245,7 +269,11 @@ impl NonFungibleTokenResolver for Contract {
             // we don't have to revert the original transfer, thus we can just return
             // true since nothing went wrong. We refund the owner for releasing the
             // storage used up by the approved account IDs. 
-            refund_approved_account_ids(owner_id, &approved_account_ids);
+            // refund_approved_account_ids(owner_id, &approved_account_ids);
+
+            if let None = all_owners.get(&owner_id) {
+              refund_if_empty(owner_id);
+            }
             return true;
           }
         }
@@ -253,32 +281,48 @@ impl NonFungibleTokenResolver for Contract {
 
       // get token object if got some token object
       let mut token = if let Some(token) = self.tokens_by_id.get(&token_id) {
-        if token.owner_id != receiver_id {  // receiver_id is the receiver. 
-          refund_approved_account_ids(owner_id, &approved_account_ids);
-          return true;  
+        // I have no idea about this logic. 
+        // if token.owner_id != receiver_id {  // receiver_id is the receiver. 
+        //   refund_approved_account_ids(owner_id, &approved_account_ids);
+        //   return true;  
+        // }
+
+        // Instead of checking for owner_id, we check if the receiver_id is NOT inside
+        // all_owners
+        if let Some(current_percentage) = token.all_owners.get(&receiver_id) {
+          // refund_approved_account_ids(owner_id, &approved_account_ids);
+
+          // Check correct percentage. Ultimately, the percentage changes, 
+          if current_percentage == &(previous_percentage + percentage) {
+            refund_if_empty(owner_id);
+            return true;
+          }
         }
         token
       } else {  // no token object, it was burned. 
-        refund_approved_account_ids(owner_id, &approved_account_ids);
+        // refund_approved_account_ids(owner_id, &approved_account_ids);
+        refund_if_empty(owner_id);
         return true;
       };
 
       env::log_str(
         format!(
-          "Return {} from @{} to @{}",
+          "Return {} from @{} to @{}, percentage {}",
           token_id,
           receiver_id,
-          owner_id   
+          owner_id,
+          percentage as f32 / 100f32   
         ).as_str(),
       );
 
-      let percentage_value = token.all_owners.get(&token.owner_id).unwrap();
+      let percentage_value = token.all_owners.get(&owner_id).unwrap();
 
-      self.internal_remove_token_from_owner(&token.owner_id, &token_id);
+      self.internal_remove_token_from_owner(&owner_id, &token_id);
 
       if percentage_value == &percentage {
         // remove token from it's current owner's set
         self.internal_add_token_to_owner(&owner_id, &token_id);
+        token.all_owners.remove(&receiver_id);
       } else {
         // Get percentage original owner has and add it back. 
         let current_percentage = token.all_owners.get(&owner_id).unwrap();
@@ -288,10 +332,12 @@ impl NonFungibleTokenResolver for Contract {
       }
 
       // Change the token struct's owner to original owner
-      token.owner_id = owner_id.clone();
+      // token.owner_id = owner_id.clone();
+
 
       // Refund approved account IDs may have set on token. 
-      refund_approved_account_ids(receiver_id.clone(), &token.approved_account_ids);
+      // refund_approved_account_ids(receiver_id.clone(), &token.approved_account_ids);
+      refund_if_empty(receiver_id.clone());
 
       // we insert the token back into the tokens_by_id collection
       self.tokens_by_id.insert(&token_id, &token);
