@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse">
+      <%= link_to "NEAR F-NFT", root_path, class: "navbar-brand", id: "logo" %>
+    </div>
+    
+    <ul class="nav navbar-nav navbar-right me-auto mb-2 mb-lg-0">
+
+      <li class="nav-item">
+        <%= link_to "Login", "javascript:login()" , class: "nav-link active" %>
+      </li>
+
+      <li class="nav-item">
+         <%= link_to "Logout", "javascript:logout()", class: "nav-link active" %>
+      </li>
+
+      <li class="nav-item">
+        <%= form_with(model: @user, method: :get, local: true) do |f| %>
+          <%= f.text_field :account_id, placeholder: "wabinab.testnet" %>
+          <%= f.submit "Search", class: "btn btn-outline-success" %>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+</nav>

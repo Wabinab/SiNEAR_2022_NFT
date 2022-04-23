@@ -1,0 +1,27 @@
+<h1>First time users</h1>
+<p>
+  If this is your first time here, click login on the upper right then click the button
+  below. 
+
+  If this is not your first time, use the Search button on the upper right too to search
+  for your account id. If you unauthorized the key, you need to click click on the 
+  button below again <b>when these fields aren't empty.</b> (Otherwise, it can't detect
+  and cache updates in database.)
+
+  <ul>
+    <li>Account ID: <%= params[:account_id] %></li>
+    <li>Public key: <%= params[:public_key] %></li>
+    <li>All keys: <%= params[:all_keys] %></li>
+  </ul>
+
+  <b>Search button can only be used in home page. If you're in 
+  user page, navigate to home page to use search. </b>
+</p>
+
+<%= form_with model: @user, local: true do |f| %>
+  <%= f.hidden_field :username , value: params[:account_id] %>
+  <%= f.hidden_field :public_key, value: params[:public_key] %>
+  <%= f.hidden_field :all_keys, value: params[:all_keys] %>
+  <%= f.submit "(TEMPORARILY A MUST) Save key to database", class: "btn btn-primary" %>
+<% end %>
+
