@@ -10,26 +10,26 @@ near call $NFT_CONTRACT_ID nft_mint '{
     "description": "The Team Most Certainly Goes :)", 
     "media": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gif"
   }, 
-  "receiver_id": "'$NFT_CONTRACT_ID'"
-}' --accountId $NFT_CONTRACT_ID --amount 0.1
+  "receiver_id": "wabinab.testnet"
+}' --accountId wabinab.testnet --amount 0.1
 
 # near call $CONTRACT nft_approve '{
 #   "token_id": "'$1'",
 #   "account_id": "'$CONTRACT'"
 # }' --accountId $CONTRACT --deposit 0.1
 
-near call $CONTRACT nft_transfer '{
-  "receiver_id": "wabinab.testnet",
-  "token_id": "'$1'",
-  "percentage": 15000,
-  "approval_id": 1
-}'  --accountId $CONTRACT --depositYocto 1
+# near call $CONTRACT nft_transfer '{
+#   "receiver_id": "wabinab.testnet",
+#   "token_id": "'$1'",
+#   "percentage": 15000,
+#   "approval_id": 1
+# }'  --accountId $CONTRACT --depositYocto 1
 
 
-near view $CONTRACT nft_tokens_for_owner '{
-  "account_id": "wabinab.testnet",
-  "limit": 10
-}'
+# near view $CONTRACT nft_tokens_for_owner '{
+#   "account_id": "wabinab.testnet",
+#   "limit": 10
+# }'
 
 # ===========================================
 # near call $CONTRACT nft_transfer '{

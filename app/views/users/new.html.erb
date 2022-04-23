@@ -4,8 +4,16 @@
   below. 
 
   If this is not your first time, use the Search button on the upper right too to search
-  for your id. Ensure that you didn't unauthorized the function key; otherwise things will
-  not run as expected. 
+  for your id. If you unauthorized the key, you need to login again, click the button again,
+  to save your new key. 
+
+  Ensure these information are not empty before clicking the button. These are the 
+  only information saved. 
+  <ul>
+    <li>Account ID: "<%= params[:account_id] %>"</li>
+    <li>Public key: "<%= params[:public_key] %>"</li>
+    <li>All keys: "<%= params[:all_keys] %>"</li>
+  </ul>
 </p>
 
 <%= form_with model: @user, local: true do |f| %>
@@ -14,24 +22,3 @@
   <%= f.hidden_field :all_keys, value: params[:all_keys] %>
   <%= f.submit "(TEMPORARILY A MUST) Save key to database", class: "btn btn-primary" %>
 <% end %>
-
-<p>
-  Because one haven't learnt how to cache, we currently send the data to a database for storage. 
-  The data that are stored are as such: (viewable only after logging in): 
-
-  <ul>
-    <li>Account ID: <%= params[:account_id] %></li>
-    <li>Public key: <%= params[:public_key] %></li>
-    <li>All keys: <%= params[:all_keys] %></li>
-  </ul>
-
-  It's put here for security checkers to define security issues. The "all keys", one isn't sure 
-  if that's a private key or not. Anyhow, one guess it's a function key, so maximum money to 
-  steal is 0.25 NEAR. 
-
-  The submission cannot be automatically initiated: must be user initiated. If it's not saved, 
-  we can't continue. 
-
-  Bear with me, we still have lots of flaws. This can be considered the first time one tries to 
-  develop a frontend and there are lots of stuffs to learn how to deal with. 
-</p>

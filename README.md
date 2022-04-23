@@ -1,33 +1,37 @@
-# Spring Is NEAR Greeter
+# Spring is NEAR Fractionalized-NFTs
 
-Spring is NEAR greeter contract. Enter the name, it call the smart contract and will greet you. 
+The first thing you did with this, is to get your environmental keys setup. 
+For security reasons, rails by default do not export these, and requires you
+to deal with it individually. You don't need my keys to play with this example
+anyways, so one shall give you instruction in generating new keys. 
 
-The smart contract is located in the `contract` folder. The rest are responsible for frontend code; built with Ruby on Rails. 
+Based on [this article](https://stackoverflow.com/questions/54277392/rails-activesupportmessageencryptorinvalidmessage), do these: 
 
-To run localhost: In command prompt:
+Delete these if exist (usually it don't if you clone from github):
+- config/master.key
+- config/credentials.yml.enc
+
+provided you're using **VSCode**:
 
 ```bash
-rails server
+EDITOR="code ." bin/rails credentials:edit
 ```
 
-Smart contract is deployed separately from frontend. To deploy, go to `contract/greeter/build.sh` and change all `wabinab.testnet` occurrences to your testnet account; install wasm-opt from https://github.com/WebAssembly/binaryen/releases/tag/version_105 (unzip and add its `bin` folder to PATH). [References](https://github.com/WebAssembly/binaryen/discussions/3797)
+This will open up a file. DOn't need to touch it, just close it. If it asks for saving, ignore it. Most probably you typed a space or soemthing which isn't important. 
 
-Then run
+Try run this: 
 
 ```bash
-bash contract/greeter/redeploy.sh
+rails s
 ```
 
-The first run you'll have an error `KeyNotFound` for the first command. That's **safe to ignore** (it's designated for subsequent redeployment anyways). 
+If it opens the browser and asks you to do migration, do these. With the new key, you should be able to run these without getting into `Rails:ActiveSupport::MessageEncryptor::InvalidMessage` error. 
 
-Remember to change the frontend contract to redirect to your contract (and one mine) if you're calling to your subaccount/account. 
+```bash
+rails db:migrate
+rails s
+```
 
-# Learnings
+> `rails s` is equivalent to `rails server`. 
 
-One actually learn lots of things! Things don't work as one expected them to, but oh well... 
-
-And one is still learning how to write in Ruby on Rails... 
-
-### References
-- `npx create-app --contract=Rust` for Greeter app in Rust; but we upgrade it to v4.0.0-pre.4. 
-- https://read.cash/@wabinab/near-api-js-with-rails-7-c749d832
+It should work now... 
