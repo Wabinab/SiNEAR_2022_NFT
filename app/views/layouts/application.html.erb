@@ -15,6 +15,7 @@
 
     <div class="container">
       <%= yield %>
+      <%= turbo_frame_tag "remote_modal", target: "_top" %>
       <%= simple_format debug(params).to_yaml if Rails.env.development? %>  
     </div>
 

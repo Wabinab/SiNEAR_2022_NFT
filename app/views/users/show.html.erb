@@ -9,6 +9,10 @@
   </div>
 </div>
 
+<div class="d-grid gap-2 d-md-flex justify-content-md-center">
+  <%= link_to "Mint", cards_url, class: "btn btn-primary btn-lg", data: { turbo_frame: "remote_modal" } %>
+</div>
+
 <div class="d-flex flex-row gap-3">
   <%# <div class="d-flex flex-column"> %>
     <% (get_tokens @user).each do |t| %>
@@ -24,4 +28,12 @@
 
     <% end %>
   <%# </div> %>
+</div>
+
+<div class="row">
+  <p>
+    Note: If you don't see your NFT's, check whether the account you log in to NEAR is really
+    this page... This button alerts you with your account id. 
+    <%= link_to "Check ID", "javascript:check_id()", class: "btn btn-secondary" %>
+  </p>
 </div>

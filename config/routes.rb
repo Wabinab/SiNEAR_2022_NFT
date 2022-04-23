@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
+  get 'cards', to: 'cards#new'
+  post 'cards', to: 'cards#create'
 
-  get 'user', to: 'users#new'
-  post 'user', to: 'users#new'
+  get 'user', to: 'users#index'
+  post 'user', to: 'users#create'
   # get 'home', to: 'static_pages#home'
 
   # root 'static_pages#home'

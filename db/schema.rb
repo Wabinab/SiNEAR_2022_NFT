@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_14_081337) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_23_070326) do
+  create_table "cards", force: :cascade do |t|
+    t.string "token_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token_id"], name: "index_cards_on_token_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "account_id"
     t.string "public_key"
