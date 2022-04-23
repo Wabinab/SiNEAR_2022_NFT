@@ -7,4 +7,4 @@ test:
 production:
   adapter: redis
   url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: SiNEAR_2022_NFT_production
+  channel_prefix: greeter_NEAR_production

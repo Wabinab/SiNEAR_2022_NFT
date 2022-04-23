@@ -1,25 +1,33 @@
-# README
+# Spring Is NEAR Greeter
 
-## How it goes
-- Minting can only be done by a single owner, just like usual NFT. 
-- After minting, the NFT can be split into F-NFTs and distribute to owners. This works just 
-like NFTs, but instead of transferring the whole NFTs, we just transfer a fraction of it. 
-- Royalty implementation may be postponed. 
+Spring is NEAR greeter contract. Enter the name, it call the smart contract and will greet you. 
 
-Each F-NFT have its own `owner_id`; but we also have `all_owners_id` in Contract to keep track of them. This is just like `approved_account_ids` which have not much use except to tell how many percentage of that NFT is being held. 
+The smart contract is located in the `contract` folder. The rest are responsible for frontend code; built with Ruby on Rails. 
 
-### Challenge #3. NFT+frontend
-This is a 2-step challenge for minting your first NFT on NEAR and creating a frontend for it. It can be as simple or complex as you like! 
+To run localhost: In command prompt:
 
-Step 1.  
-Deploy an NFT smart contract on the testnet. Mint an NFT.
+```bash
+rails server
+```
 
-Step 2.  
-Build a frontend to connect with the NFT smart contract you deployed (GitHub pages is the most simple option). The frontend should allow a user to log in with NEAR and mint an NFT to their own wallet. 
+Smart contract is deployed separately from frontend. To deploy, go to `contract/greeter/build.sh` and change all `wabinab.testnet` occurrences to your testnet account; install wasm-opt from https://github.com/WebAssembly/binaryen/releases/tag/version_105 (unzip and add its `bin` folder to PATH). [References](https://github.com/WebAssembly/binaryen/discussions/3797)
 
-Share the link to 🧠│nearsping-submissions-week2  for us to review.
+Then run
 
+```bash
+bash contract/greeter/redeploy.sh
+```
 
-## References
-- https://github.com/near-examples/nft-tutorial/blob/main/nft-contract/
+The first run you'll have an error `KeyNotFound` for the first command. That's **safe to ignore** (it's designated for subsequent redeployment anyways). 
 
+Remember to change the frontend contract to redirect to your contract (and one mine) if you're calling to your subaccount/account. 
+
+# Learnings
+
+One actually learn lots of things! Things don't work as one expected them to, but oh well... 
+
+And one is still learning how to write in Ruby on Rails... 
+
+### References
+- `npx create-app --contract=Rust` for Greeter app in Rust; but we upgrade it to v4.0.0-pre.4. 
+- https://read.cash/@wabinab/near-api-js-with-rails-7-c749d832

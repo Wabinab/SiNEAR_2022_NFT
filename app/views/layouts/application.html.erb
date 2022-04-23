@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SiNEAR2022Nft</title>
+    <title>GreeterNear</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -10,7 +10,14 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="d-flex flex-column h-100">
+    <%= render 'layouts/header' %>
+
+    <div class="container">
+      <%= yield %>
+      <%= simple_format debug(params).to_yaml if Rails.env.development? %>  
+    </div>
+
+    <%= render 'layouts/footer' %>
   </body>
 </html>
