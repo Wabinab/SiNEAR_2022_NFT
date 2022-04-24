@@ -70,8 +70,7 @@ We don't do transfer button on users page, though. Just like NEAR wallet, you ca
 The creation of NFT isn't one click "open crate" (someone make the cat nft open crate which have an awesome frontend for this Spring is NEAR, if you'd seen it) and it assigns you image. Ours, you put in the title, description, and an image hyperlink (**must be direct to image**. If you upload to IPFS, make sure to get ipfs.io/CID/**image_name.png** instead of ipfs.io/CID, otherwise won't render!) Upon creation, you should see it in your page. 
 If not, just refresh your user page. 
 
-If two of you shares the nft, both of you can see the NFT on your user page. **In fact, both of you can see the same NFT in your NEAR web wallet!** The web wallet don't show the percentage of hold, neither does ours (we haven't implement that lol). 
-Maybe next time we'll put in the percentage. 
+If two of you shares the nft, both of you can see the NFT on your user page. **In fact, both of you can see the same NFT in your NEAR web wallet!** The web wallet don't show the percentage of hold, but ours do! So that's a difference. 
 
 Overall, it's not the best, we can do better, but oh well, not everybody build the best anyways! 
 
