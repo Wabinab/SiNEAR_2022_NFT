@@ -35,3 +35,13 @@ rails s
 > `rails s` is equivalent to `rails server`. 
 
 It should work now... 
+
+# Introductions; Explanations
+- speak about wallet both can see. 
+- dropped approvals and royalty
+
+- Image needs URL not upload function: it's not the best, but oh well, not everyone build the best anyways! 
+
+## References
+- https://docs.near.org/docs/tutorials/contracts/nfts/introduction
+- https://github.com/near-examples/nft-tutorial
