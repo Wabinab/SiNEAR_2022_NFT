@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get 'cards', to: 'cards#index'
-  get ':token_id', to: 'cards#show'
-  post 'cards', to: 'cards#create'
+  get '/cards/:token_id', to: 'cards#show'
+  # post 'cards', to: 'cards#create'
 
   get 'user', to: 'users#index'
   post 'user', to: 'users#create'
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   # root 'static_pages#home'
   root 'users#new'
-  get '@:id', to: 'users#show'
+  # get '@:id', to: 'users#show'
 
   resources :users
 end

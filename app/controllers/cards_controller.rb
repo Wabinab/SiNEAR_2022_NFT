@@ -14,8 +14,8 @@ class CardsController < ApplicationController
     @token_id = token_id
   end
 
-  def create
-  end
+  # def create
+  # end
 
   private
     def card_params 
