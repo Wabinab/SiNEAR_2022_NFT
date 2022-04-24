@@ -83,6 +83,8 @@ If not, just refresh your user page.
 
 If two of you shares the nft, both of you can see the NFT on your user page. **In fact, both of you can see the same NFT in your NEAR web wallet!** The web wallet don't show the percentage of hold, but ours do! So that's a difference. 
 
+It's not possible to transfer F-NFT from wallet, because we have a different interface than what it expects. Particularly, we do not make Percentage an `std::option::Option`, (it kinda complicates), so it doesn't work. We do not have a "max" for percentage to autofill, though. It's just an addition that one thought is optional to add, so "no" we goes. 
+
 Overall, it's not the best, we can do better, but oh well, not everybody build the best anyways! 
 
 Thanks for reading! 
