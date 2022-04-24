@@ -55,10 +55,27 @@ That's about it for the contract. Let's look at frontend.
 
 ## Frontend
 
-- speak about wallet both can see. 
-- dropped approvals and royalty
+(if we speak of "cards", we mean "nft")
 
-- Image needs URL not upload function: it's not the best, but oh well, not everyone build the best anyways! 
+As usual, we have some problem with saving users to database, so we'll do that. In contrary, one realized we can create cards static pages and render them without database! Perhaps we'll work on the user next time, maybe, if we have time. For now, just continue with login then click on a button to save info to database, and after clicking button redirect to page. If not, **the search bar on the right can search for user ID, BUT NOT NFT's!!!**. 
+Searching for a specific account like "wabinab.testnet" takes you to the page, if you can't remember your page which looks like "/users/1". 
+
+The cards do have a database, but we don't use it. 
+
+Minting is just usual stuffs. Owner mint, 100% of share to owner, no split mint (that's being too sarcastic). If you want 50% to others, mint and transfer! 
+
+We don't do transfer button on users page, though. Just like NEAR wallet, you can only transfer after clicking into the NFT. Here, after clicking to NFT, it'll take you to the page where you see a button at the bottom to perform the transfer. Clicking on it will un-collapse the transfer form. 
+**After transfer, please MANUALLY RELOAD THE PAGE to update the owner. That's a bug fixed (I think) in localhost but not after deployed.** Reloading the page, you can see the newly updated owners sharing the NFT. 
+
+The creation of NFT isn't one click "open crate" (someone make the cat nft open crate which have an awesome frontend for this Spring is NEAR, if you'd seen it) and it assigns you image. Ours, you put in the title, description, and an image hyperlink (**must be direct to image**. If you upload to IPFS, make sure to get ipfs.io/CID/**image_name.png** instead of ipfs.io/CID, otherwise won't render!) Upon creation, you should see it in your page. 
+If not, just refresh your user page. 
+
+If two of you shares the nft, both of you can see the NFT on your user page. **In fact, both of you can see the same NFT in your NEAR web wallet!** The web wallet don't show the percentage of hold, neither does ours (we haven't implement that lol). 
+Maybe next time we'll put in the percentage. 
+
+Overall, it's not the best, we can do better, but oh well, not everybody build the best anyways! 
+
+Thanks for reading! 
 
 ## References
 - https://docs.near.org/docs/tutorials/contracts/nfts/introduction
