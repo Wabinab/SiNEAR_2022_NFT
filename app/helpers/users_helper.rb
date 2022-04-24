@@ -19,4 +19,10 @@ module UsersHelper
       }
     )["result"]["result"].pack('c*'))
   end
+
+  def to_percentage(json_info, user)
+    account_id = user.account_id
+    percentage = json_info["all_owners"][account_id]
+    percentage.to_f / 100
+  end
 end
