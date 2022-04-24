@@ -54,13 +54,14 @@
           <%= f.hidden_field '', value: @token_id, id: "token_id" %>
 
           <%= f.label "Percentage:" %>
-          <%= f.text_field '', class: 'form-control', id: "percentage" %>
+          <%= f.number_field '', in: 0.01..100.0, step: 0.01, class: 'form-control', id: "percentage" %>
 
           <div class="p-3 text-center">
             <%= link_to "Submit", "javascript:nft_transfer()", class: "btn btn-outline-success" %>
           </div>
 
-          <p>Please manually reload after transfer.</p>
+          <p><strong>Please manually reload after transfer.</strong></p>
+          <p>If you type percentage value more than 100,<br> it would still work, but smart contract will panic.</p>
         <% end %>
     </div>
   </div>
