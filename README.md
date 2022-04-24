@@ -62,6 +62,17 @@ Searching for a specific account like "wabinab.testnet" takes you to the page, i
 
 The cards do have a database, but we don't use it. 
 
+If users don't have a database in the future, searching for it needs to be exact. 
+Particularly, one don't know how the search function works online, otherwise, we could
+have a popup at the bottom for suggestions, just like more user-friendly search functions 
+on nearblocks.io. Ours is more like the explorer's search function. 
+Anyway, without database, we could fetch any wallet and display them rather than like now, 
+**if you don't register yourself, you can't display yourself.** This is a weakness of this
+design. 
+
+As usual, because change methods are on the frontend, (while view functions are on the backend), anything that runs on frontend cannot be pass to backend easily (it requires a complicated setup that one didn't make it work, unfortunately.), so if you click on buttons etc, there
+would be no freezing of buttons, sometimes even don't have an alert reaction despite we coded one (because the page refreshes!), moving on... 
+
 Minting is just usual stuffs. Owner mint, 100% of share to owner, no split mint (that's being too sarcastic). If you want 50% to others, mint and transfer! 
 
 We don't do transfer button on users page, though. Just like NEAR wallet, you can only transfer after clicking into the NFT. Here, after clicking to NFT, it'll take you to the page where you see a button at the bottom to perform the transfer. Clicking on it will un-collapse the transfer form. 
