@@ -20,12 +20,9 @@ class CardsController < ApplicationController
   # def create
   # end
 
-  # private
-    # def card_params 
-    #   params.require(:card).permit(:token_id)
-    # end
+  private
 
-    # def token_id 
-    #   params.require(:token_id)
-    # end
+    def token_id 
+      params.require(:token_id)
+    end
 end
