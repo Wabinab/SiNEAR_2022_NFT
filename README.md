@@ -36,6 +36,16 @@ rails s
 
 It should work now... 
 
+## Deploy to heroku
+Make an app on heroku, get this repo, then run: 
+
+```bash
+git push heroku main
+heroku run rails db:migrate
+```
+
+It should work now! 
+
 # Introductions; Explanations
 ## Contract
 
