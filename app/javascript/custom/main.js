@@ -63,7 +63,32 @@ function nft_mint(token_id) {
 }
 
 
+function nft_transfer() {
+    var receiver_id = document.getElementById("receiver_id").value;
+    var token_id = document.getElementById("token_id").value;
+    var percentage = document.getElementById("percentage").value;
 
+    window.contract.nft_transfer(
+      {
+        "receiver_id": receiver_id,
+        "token_id": token_id,
+        "percentage": Math.floor(percentage * 100),
+        "approval_id": 1  // just a random number, not used anyways. 
+      },
+      "30000000000000",
+      "1"  // 1 yoctoNear
+    ).then(
+      value => {
+        alert('Tranferred to ' + receiver_id + ' ' + percentage + '%.');
+        window.location.reload();
+      },
+      err => alert(err),
+    );
+}
+
+
+
+window.nft_transfer = nft_transfer
 window.nft_mint = nft_mint
 window.check_id = check_id
 window.logout = logout

@@ -5,37 +5,24 @@ class CardsController < ApplicationController
     @token_id = "f_nft_" + Time.now.to_f.to_s.gsub('.', '_')
   end
 
-  def index
-    respond_to do |format|
-      format.js 
-    end
-    
+  def index  
+    @card = Card.find_by(token_id: card_params[:token_id]);
+    redirect_to @card
   end
 
   def show
-    redirect_to "/users/1"
+    @token_id = token_id
   end
 
   def create
-    # @token_id = "f_nft_" + Time.now.to_f.to_s.gsub('.', '_')
-    # @card = Card.new(@token_id)
+  end
 
-    # respond_to do |format|
-      # if @card.save 
-      #   format.js
-      #   format.html { redirect_to @card }
-      # else
-      #   format.html { render :new }
-      #   # format.turbo_stream { render :form_update, status: :unprocessable_entity }
-      # end
-    # end
-
-    respond_to do |format|
-        format.js 
-        format.html { redirect_to "/users/1" }
+  private
+    def card_params 
+      params.require(:card).permit(:token_id)
     end
 
-    # redirect_to "/users/1"
-
-  end
+    def token_id 
+      params.require(:token_id)
+    end
 end

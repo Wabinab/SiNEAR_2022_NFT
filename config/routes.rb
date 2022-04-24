@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  get 'cards', to: 'cards#new'
+  get 'cards', to: 'cards#index'
+  get ':token_id', to: 'cards#show'
   post 'cards', to: 'cards#create'
 
   get 'user', to: 'users#index'

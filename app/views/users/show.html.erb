@@ -18,13 +18,15 @@
     <% (get_tokens @user).each do |t| %>
       <% @metadata = t["metadata"] %>
 
-      <div class="card" style="width: 18rem;">
-        <%= image_tag(@metadata["media"]) %>
-        <div class="card-body">
-          <h4 class="card-title"><%= @metadata["title"] %></h4>
-          <p class="card-text"><%= truncate(@metadata["description"], :length => 100) %></p>
+      <%= link_to("/" + t["token_id"], class: "no_link") do %>
+        <div class="card" style="width: 18rem;">
+          <%= image_tag(@metadata["media"]) %>
+          <div class="card-body">
+            <h4 class="card-title"><%= @metadata["title"] %></h4>
+            <p class="card-text"><%= truncate(@metadata["description"], :length => 100) %></p>
+          </div>
         </div>
-      </div>
+      <% end %>
 
     <% end %>
   <%# </div> %>
