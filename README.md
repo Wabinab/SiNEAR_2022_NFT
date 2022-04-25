@@ -98,6 +98,9 @@ It's not possible to transfer F-NFT from wallet, because we have a different int
 It's not totally smooth too! Sometimes, we want a form popup for minting, but it redirects to `/cards`, which also does the minting correctly, but it has an ugly background. A popup form with a users background is what's more expected. 
 Another redirect is we have `.then` for promises. One encounters once that it `alert` me for `nft_transfer` failed; but in fact it's successful. So that's another design error that one don't know how to replicate after that single encounters, what says solving. 
 
+**It's possible to transfer from testnet to near**, but it **will be lost forever**. Of course, how can testnet transfer to near? There are some logic where the transaction succeeded, 
+and we can't really check addresses **especially if people uses implicit addresses rather than domain addresses**. So yeah, if transfer wrong, it'll be lost forever. 
+
 Overall, it's not the best, we can do better, but oh well, not everybody build the best anyways! 
 
 Thanks for reading! 
