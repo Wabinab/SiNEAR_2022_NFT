@@ -13,7 +13,7 @@
   <body class="d-flex flex-column h-100">
     <%= render 'layouts/header' %>
 
-    <div class="container">
+    <div class="container pb-6">
       <%= yield %>
       <%= turbo_frame_tag "remote_modal", target: "_top" %>
       <%= simple_format debug(params).to_yaml if Rails.env.development? %>  
